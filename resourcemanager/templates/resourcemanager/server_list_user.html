@@ -1,0 +1,57 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <nav class="navbar navbar-light bg-light w-100">
+    <a class="navbar-brand"></a>
+    <form class="form-inline" action="" method="post">
+      {% csrf_token %}
+      {{ form }}
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">查询</button>
+    </form>
+  </nav>
+
+    {% if server_list %}
+
+    <table class="table mr-2">
+      <thead>
+        <tr>
+          <th scope="col">名称</th>
+          <th scope="col">IP地址</th>
+          <th scope="col">CPU/内存</th>
+          <th scope="col">系统/业务盘</th>
+          <th scope="col">操作系统</th>
+          <th scope="col">服务器分组</th>
+          <th scope="col">业务系统</th>
+          <th scope="col">远程IP</th>
+          <th scope="col">远程端口</th>
+          <th scope="col">备注</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for server in server_list %}
+        <tr>
+          <td><a href="{{ server.get_absolute_url }}">{{ server.name }}</a></td>
+          <td>{{ server.ip_address|default_if_none:"" }}</td>
+          <td>{{ server.cpu_cores_text }}/{{ server.memory_size_text }}</td>
+          <td>{{ server.disc_sys_size_text }}/{{ server.disc_biz_size_text|default_if_none:"-" }}</td>
+          <td>{{ server.operating_system|default_if_none:"-" }}</td>
+          <td>{{ server.groups_list|default:"-" }}</td>
+          <td>{{ server.biz_system_list|default:"-" }}</td>
+          <td>{{ server.remote_connect_ip|default_if_none:"-" }}</td>
+          <td>{{ server.remote_connect_port|default_if_none:"-" }}</td>
+          <td>{{ server.summary|default_if_none:""|default:"-" }}</td>
+        </tr>
+      {% endfor %}
+
+      </tbody>
+    </table>
+
+    <ul>
+
+
+
+    </ul>
+    {% else %}
+      <p>没有找到服务器.</p>
+    {% endif %} 
+{% endblock %}

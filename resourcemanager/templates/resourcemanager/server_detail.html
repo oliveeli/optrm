@@ -1,0 +1,137 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<div class="w-100 mr-2">
+
+<div class="alert alert-primary" role="alert">
+  <h8>{{ server.name }}服务器详情</h8>
+</div>
+
+    <div class="ml-4 p-1 pb-3">
+    <div class="row mb-2">
+      <div  style="width:110px;">
+        IP:
+      </div>
+      <div class="col-4">
+        {{ server.ip_address }}
+      </div>
+      <div  style="width:110px;">
+        CPU/内存:
+      </div>
+      <div class="col-4">
+        {{ server.cpu_cores_text }}/{{ server.memory_size_text }}
+      </div>
+    </div>
+    <div class="row mb-2">
+
+    </div>
+    <div class="row mb-2">
+      <div  style="width:110px;">
+        系统磁盘:
+      </div>
+      <div class="col-4">
+        {{ server.disc_sys_size_text }}
+      </div>
+      <div  style="width:110px;">
+        业务磁盘:
+      </div>
+      <div class="col-4">
+        {{ server.disc_biz_size_text|default_if_none:"-" }}
+      </div>
+    </div>
+    <div class="row mb-2">
+      <div  style="width:110px;">
+        操作系统:
+      </div>
+      <div class="col-8">
+        {{ server.operating_system|default_if_none:"-" }}
+      </div>
+    </div>
+    <div class="row mb-2">
+      <div  style="width:110px;">
+        服务器分组:
+      </div>
+      <div class="col-4">
+        {{ server.groups_list|default:"-" }}
+      </div>
+      <div  style="width:110px;">
+        业务系统:
+      </div>
+      <div class="col-4">
+        {{ server.biz_system_list|default:"-" }}
+      </div>
+    </div>
+    <div class="row mb-2">
+      <div  style="width:110px;">
+        远程连接IP:
+      </div>
+      <div class="col-4">
+        {{ server.remote_connect_ip|default_if_none:"-" }}
+      </div>
+      <div  style="width:110px;">
+        远程连接端口:
+      </div>
+      <div class="col-4">
+        {{ server.remote_connect_port|default_if_none:"-" }}
+      </div>
+    </div>
+    <div class="row mb-2">
+      <div  style="width:110px;">
+        备注:
+      </div>
+      <div class="col-8">
+        {{ server.summary|default:"-" }}
+      </div>
+    </div>
+
+    </div>
+    
+
+
+{% if server_passwords %}
+        <table class="table table-sm ml-2">
+        <thead>
+            <tr>
+            <th scope="col" class="col-3">账号</th>
+            <th scope="col">密码</th>
+            </tr>
+        </thead>
+        <tbody>
+    {% for up in server_passwords %}
+            <tr>
+            <td>{{ up.user_and_password.user_name }}</td>
+            <td>{{ up.user_and_password.password|default:"-"  }}</td>
+            </tr>
+    {% endfor %}
+
+      </tbody>
+    </table>
+
+{% endif %}
+
+{% if server.component_instance_list %}
+
+        <table class="table table-sm  ml-2">
+        <thead>
+            <tr>
+            <th scope="col-2" class="col-3">部署组件名称</th>
+            <th scope="col">端口</th>
+            </tr>
+        </thead>
+        <tbody>
+    {% for ci in server.component_instance_list %}
+            <tr>
+            <td>{{ ci.component }}</td>
+            <td>{{ ci.port_list|default:"-"  }}</td>
+            </tr>
+    {% endfor %}
+
+      </tbody>
+    </table>
+{% else %}
+<p><strong>无部署组件</strong></p>
+{% endif %}
+
+</div>
+{% endblock %}

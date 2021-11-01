@@ -1,0 +1,55 @@
+{% extends "base_generic.html" %}
+
+{% block sidebar %}  {% endblock %}
+
+
+{% block content %}
+
+<div class="col-center-block p-3 bg-light" style="width:300px">
+
+  {% if form.errors %}
+  <div>
+  <p>用户名密码不对，请重试.</p>
+  </div>
+  {% endif %}
+
+  {% if next %}
+    <div>
+      {% if user.is_authenticated %}
+      <p>你的账号没有访问该页面的权限。请使用有权限的账号重新登录。</p>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <h5>登录</h5>
+  <form method="post" action="{% url 'login' %}">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col">
+        {{ form.username.label_tag }}
+      </div>
+      <div class="col">
+        {{ form.username }}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        {{ form.password.label_tag }}
+      </div>
+      <div class="col">
+        {{ form.password }}
+      </div>
+    </div>
+    <div class="row text-center m-0">
+      <input type="submit" value="login" class="btn btn-info w-100" />
+      <input type="hidden" name="next" value="{{ next }}" />
+    </div>
+
+  </form>
+  <!--  test -->
+</div>
+
+
+
+
+{% endblock %}
