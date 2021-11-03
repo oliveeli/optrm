@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views import generic
 from django.http import HttpResponse
+from django.template import loader
 
 from .models import Component,ComponentInstance,Server,ServerConnection,BizSystem,OperatingSystem,ServerGroup
 from .forms import SearchForm
@@ -17,6 +18,28 @@ def _check_permission(server_groups,user_groups):
             return True
     return False
 
+def _quer_server_list(request):
+    query = request.POST.get("query")
+    server_group = request.POST.get("server_group")
+    biz_system = request.POST.get("biz_system")
+    component = request.POST.get("component")
+    sql = Server.objects
+    if query != None and query != "":
+        sql = sql.filter(Q(name__contains=query) | Q(ip_address__contains=query))
+    if server_group != None and server_group != "":
+        sql = sql.filter(group__exact=server_group)
+    if biz_system != None and biz_system != "":
+        sql = sql.filter(biz_system__exact=biz_system)
+    component_ids = set(())
+    if component != None and component != "":
+        ci = ComponentInstance.objects.filter(component__exact=component).distinct().distinct()
+        added = False
+        for c in ci:
+            component_ids.add(c.server.id)
+            added = True
+        if added == True:
+            sql = sql.filter(id__in=component_ids)
+    return sql.filter(user_group__in=request.user.groups.all()).distinct().order_by('name')
 
 @login_required
 def server_detail(request, server_id):
@@ -32,6 +55,26 @@ def server_detail(request, server_id):
 class ServerDetailView(LoginRequiredMixin,generic.DetailView):
     model = Server
 
+@login_required
+def server_list_download(request):
+    # Create the HttpResponse object with the appropriate CSV header.
+    queryset = _quer_server_list(request)
+    response = HttpResponse(
+        content_type='text/csv',
+        headers={'Content-Disposition': 'attachment; filename="server-list.csv"'},
+    )
+
+    csv_data = (
+        ('名称','IP地址', 'CPU','内存','系统盘大小','业务盘大小','操作系统','服务器分组','业务系统','远程连接IP','远程连接端口','备注'),
+    )
+
+    for data in queryset:
+        csv_data += ((data.name,data.ip_address,data.cpu_cores_text,data.memory_size_text,data.disc_sys_size_text,data.disc_biz_size_text,data.operating_system,data.groups_list,data.biz_system_list,data.remote_connect_ip,data.remote_connect_port,data.summary),)
+
+    t = loader.get_template('resourcemanager/my_template_name.txt')
+    c = {'data': csv_data}
+    response.write(t.render(c))
+    return response    
 
 class ServerListUserView(LoginRequiredMixin,generic.ListView):
     model = Server
@@ -43,22 +86,34 @@ class ServerListUserView(LoginRequiredMixin,generic.ListView):
         query = self.request.POST.get("query")
         server_group = self.request.POST.get("server_group")
         biz_system = self.request.POST.get("biz_system")
-        context['form'] = SearchForm({'query':query,'server_group':server_group,'biz_system':biz_system})
+        component = self.request.POST.get("component")
+        context['form'] = SearchForm({'query':query,'server_group':server_group,'biz_system':biz_system,'component':component})
         return context
 
     def post(self, request, *args, **kwargs):
         return self.get(request, *args, **kwargs)
     
     def get_queryset(self):
-        query = self.request.POST.get("query")
-        server_group = self.request.POST.get("server_group")
-        biz_system = self.request.POST.get("biz_system")
-        sql = Server.objects
-        if query != None and query != "":
-            sql = sql.filter(Q(name__contains=query) | Q(ip_address__contains=query))
-        if server_group != None and server_group != "":
-            sql = sql.filter(group__exact=server_group)
-        if biz_system != None and biz_system != "":
-            sql = sql.filter(biz_system__exact=biz_system)
-
-        return sql.filter(user_group__in=self.request.user.groups.all()).distinct().order_by('name')
+        return  _quer_server_list(self.request)
+        # query = self.request.POST.get("query")
+        # server_group = self.request.POST.get("server_group")
+        # biz_system = self.request.POST.get("biz_system")
+        # component = self.request.POST.get("component")
+        # sql = Server.objects
+        # if query != None and query != "":
+        #     sql = sql.filter(Q(name__contains=query) | Q(ip_address__contains=query))
+        # if server_group != None and server_group != "":
+        #     sql = sql.filter(group__exact=server_group)
+        # if biz_system != None and biz_system != "":
+        #     sql = sql.filter(biz_system__exact=biz_system)
+        # component_ids = set(())
+        # if component != None and component != "":
+        #     ci = ComponentInstance.objects.filter(component__exact=component).distinct().distinct()
+        #     added = False
+        #     for c in ci:
+        #         component_ids.add(c.server.id)
+        #         added = True
+        #     if added == True:
+        #         sql = sql.filter(id__in=component_ids)
+        
+        # return sql.filter(user_group__in=self.request.user.groups.all()).distinct().order_by('name')

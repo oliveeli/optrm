@@ -37,6 +37,7 @@ class Component(models.Model):
 
 class Port(models.Model):
     port = models.IntegerField("端口",unique=True)
+    description = models.TextField('说明', max_length=512, blank=True, null=True )
 
     def __str__(self):
         return str(self.port)
@@ -71,11 +72,23 @@ class BizSystem(models.Model):
         verbose_name_plural = "业务系统"
 
 class UserAndPassword(models.Model):
+    name = models.CharField('名称',max_length=128, null=True, blank=False )
     user_name = models.CharField('账号',max_length=24)
     password = models.CharField('密码',max_length=64)
 
+    def name_str(self):
+        if self.name == None or self.name == '':
+            return self.id
+        else:
+            return self.name
+
+    name_str.short_description = '名称'
+
     def __str__(self):
-        return self.user_name + '/' + self.password
+        if self.name == None or self.name == '':
+            return self.user_name + '/' + self.password
+        else:
+            return self.name
 
     class Meta:
         verbose_name = "账号密码"

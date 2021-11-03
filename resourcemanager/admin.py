@@ -6,9 +6,20 @@ admin.site.register(ServerGroup)
 admin.site.register(OperatingSystem)
 admin.site.register(BizSystem)
 admin.site.register(Component)
-admin.site.register(UserAndPassword)
-admin.site.register(Port)
+# admin.site.register(UserAndPassword)
+# admin.site.register(Port)
 
+@admin.register(Port)
+class PortAdmin(admin.ModelAdmin):
+    list_display = ('port','description')
+    fields = ['port','description']
+    search_fields = ('port','description')
+
+@admin.register(UserAndPassword)
+class UserAndPasswordAdmin(admin.ModelAdmin):
+    list_display = ('name_str','user_name','password')
+    fields = ['name','user_name','password']
+    search_fields = ('name',)
 
 class ComponentInstanceInline(admin.StackedInline):
     model = ComponentInstance

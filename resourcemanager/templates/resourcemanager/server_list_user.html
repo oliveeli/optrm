@@ -7,6 +7,7 @@
       {% csrf_token %}
       {{ form }}
       <button class="btn btn-outline-success my-2 my-sm-0" type="submit">查询</button>
+      <a class="btn btn-outline-success my-2 my-sm-0" href="{% url 'user-servers-download'%}" role="button">下载</a>
     </form>
   </nav>
 
