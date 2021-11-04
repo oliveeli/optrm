@@ -93,6 +93,7 @@
         <table class="table table-sm ml-2">
         <thead>
             <tr>
+            <th scope="col" class="col-3">名称</th>
             <th scope="col" class="col-3">账号</th>
             <th scope="col">密码</th>
             </tr>
@@ -100,6 +101,7 @@
         <tbody>
     {% for up in server_passwords %}
             <tr>
+            <td>{{ up.user_and_password.name|default:"-" }}</td>
             <td>{{ up.user_and_password.user_name }}</td>
             <td>{{ up.user_and_password.password|default:"-"  }}</td>
             </tr>

@@ -39,6 +39,8 @@ def _quer_server_list(request):
             added = True
         if added == True:
             sql = sql.filter(id__in=component_ids)
+        else:
+            return Server.objects.get_queryset().none()
     return sql.filter(user_group__in=request.user.groups.all()).distinct().order_by('name')
 
 @login_required
