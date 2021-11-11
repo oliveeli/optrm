@@ -28,6 +28,8 @@ class OperatingSystem(models.Model):
 class Component(models.Model):
     name = models.CharField('名称',max_length=100)
     version = models.CharField('版本',max_length=10)
+    description = models.TextField('说明', max_length=512, blank=True, null=True )
+    
     def __str__(self):
         return self.name + ':' + self.version
 
@@ -36,11 +38,14 @@ class Component(models.Model):
         verbose_name_plural = "组件"
 
 class Port(models.Model):
+    name = models.CharField('名称',blank=True, null=True, max_length=100)
     port = models.IntegerField("端口",unique=True)
     description = models.TextField('说明', max_length=512, blank=True, null=True )
 
     def __str__(self):
-        return str(self.port)
+        if self.name == None or self.name == '':
+            return str(self.port)
+        return self.name + '(' + str(self.port) + ')'
 
     class Meta:
         verbose_name = "端口"
@@ -49,11 +54,12 @@ class Port(models.Model):
 
 class ComponentInstance(models.Model):
     component = models.ForeignKey(Component,  on_delete=models.CASCADE, null=True, verbose_name="组件")
+    usage = models.CharField('组件用途', max_length=128, blank=True, null=True )
     server = models.ForeignKey('Server',  on_delete=models.CASCADE, null=True)
-    port = models.ManyToManyField(Port, blank=True, verbose_name="端口")
+    port = models.ManyToManyField(Port, blank=True, verbose_name="组件端口")
 
     def port_list(self):
-        return ', '.join([str(a.port) for a in self.port.all()])
+        return ', '.join([str(a) for a in self.port.all()])
     
 
     class Meta:

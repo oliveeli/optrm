@@ -5,15 +5,21 @@ from .models import Component,Port,ComponentInstance,Server,BizSystem,OperatingS
 admin.site.register(ServerGroup)
 admin.site.register(OperatingSystem)
 admin.site.register(BizSystem)
-admin.site.register(Component)
+# admin.site.register(Component)
 # admin.site.register(UserAndPassword)
 # admin.site.register(Port)
 
+@admin.register(Component)
+class ComponentAdmin(admin.ModelAdmin):
+    list_display = ('name','version', 'description')
+    fields = ['name','version', 'description']
+    search_fields = ('name', 'description')
+
 @admin.register(Port)
 class PortAdmin(admin.ModelAdmin):
-    list_display = ('port','description')
-    fields = ['port','description']
-    search_fields = ('port','description')
+    list_display = ('name','port','description')
+    fields = ['name','port','description']
+    search_fields = ('name', 'port','description')
 
 @admin.register(UserAndPassword)
 class UserAndPasswordAdmin(admin.ModelAdmin):
@@ -23,7 +29,7 @@ class UserAndPasswordAdmin(admin.ModelAdmin):
 
 class ComponentInstanceInline(admin.StackedInline):
     model = ComponentInstance
-    fields = [('component','port')]
+    fields = [('component','usage'),'port',]
     extra = 1
 
 class ServerConnectionInline(admin.StackedInline):

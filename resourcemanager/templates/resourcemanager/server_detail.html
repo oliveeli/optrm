@@ -117,7 +117,8 @@
         <table class="table table-sm  ml-2">
         <thead>
             <tr>
-            <th scope="col-2" class="col-3">部署组件名称</th>
+            <th scope="col" class="col-3">组件名称</th>
+            <th scope="col" class="col-3">组件用途</th>
             <th scope="col">端口</th>
             </tr>
         </thead>
@@ -125,6 +126,7 @@
     {% for ci in server.component_instance_list %}
             <tr>
             <td>{{ ci.component }}</td>
+            <td>{{ ci.usage|default:"-" }}</td>
             <td>{{ ci.port_list|default:"-"  }}</td>
             </tr>
     {% endfor %}
