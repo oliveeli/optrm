@@ -3,6 +3,9 @@ from django.urls import reverse
 import uuid 
 from datetime import date
 from django.contrib.auth.models import Group
+import socket
+import struct
+
 
 
 class ServerGroup(models.Model):
@@ -99,10 +102,16 @@ class UserAndPassword(models.Model):
     class Meta:
         verbose_name = "账号密码"
         verbose_name_plural = "账号密码"
+        
+def _ip_to_int(ip):
+    if ip == None:
+        return 0
+    return socket.ntohl(struct.unpack("I",socket.inet_aton(str(ip)))[0]) 
 
 class Server(models.Model):
     name = models.CharField('名称',max_length=200)
     ip_address = models.CharField("IP地址",max_length=200)
+    ip_address_int = models.IntegerField("IP地址整数", null=False, default=0)
     cpu_cores = models.IntegerField("CPU核数")
     memory_size = models.IntegerField("内存大小(G)")
     disc_sys_size = models.IntegerField("系统磁盘大小(G)")
@@ -116,6 +125,11 @@ class Server(models.Model):
 
     remote_connect_ip = models.CharField("远程连接IP", blank=True, null=True, max_length=64)
     remote_connect_port = models.CharField("远程连接端口", blank=True, null=True, max_length=20)
+    
+    
+    def save(self, *args, **kwargs):
+        self.ip_address_int = _ip_to_int(self.ip_address)
+        super(Server, self).save(*args, **kwargs)
 
     def cpu_cores_text(self):
         return str(self.cpu_cores) + '核'

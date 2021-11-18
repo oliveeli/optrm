@@ -41,7 +41,7 @@ def _quer_server_list(request):
             sql = sql.filter(id__in=component_ids)
         else:
             return Server.objects.get_queryset().none()
-    return sql.filter(user_group__in=request.user.groups.all()).distinct().order_by('name')
+    return sql.filter(user_group__in=request.user.groups.all()).distinct().order_by('ip_address_int')
 
 @login_required
 def server_detail(request, server_id):

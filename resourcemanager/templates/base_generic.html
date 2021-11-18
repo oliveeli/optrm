@@ -1,3 +1,5 @@
+{% load generalfilters %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,19 +47,30 @@
   
   {% block pagination %}
     {% if is_paginated %}
-        <div class="pagination">
-            <span class="page-links">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-center">
                 {% if page_obj.has_previous %}
-                    <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">上一页</a>
+                    <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.previous_page_number }}">上一页</a></li>
+                {% else %}
+                   <li class="page-item disabled"><a class="page-link" href="#">上一页</a></li>
                 {% endif %}
-                <span class="page-current">
-                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-                </span>
+                {% for  i in  page_obj.paginator.num_pages|get_range %}
+                  {% if i|add:1  == page_obj.number %}
+                    <li class="page-item active" aria-current="page"><span class="page-link">{{ i|add:1 }}</span></li>
+                  {% else %}
+                    <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ i|add:1 }}">{{ i|add:1 }}</a></li>
+                  {% endif %}
+                  
+                {% endfor %}
                 {% if page_obj.has_next %}
-                    <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">下一页</a>
+                    <li class="page-item"><a class="page-link" href="{{ request.path }}?page={{ page_obj.next_page_number }}">下一页</a></li>
+                {% else %}
+                   <li class="page-item disabled"><a class="page-link" href="#">下一页</a></li>
                 {% endif %}
-            </span>
-        </div>
+          </ul>
+        </nav>
+            
+
     {% endif %}
   {% endblock %} 
   
