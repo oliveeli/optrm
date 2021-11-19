@@ -1,9 +1,51 @@
 {% extends "base_generic.html" %}
 
+
+{% block script %}
+
+  <script type="text/javascript">
+  
+    function resetPage(){
+          $("#id_page").val(1);
+    }
+
+    function reInitValue(){
+      $('#id_server_group').val('{{ form.server_group.value|default_if_none:"" }}');
+      $('#id_biz_system').val('{{ form.biz_system.value|default_if_none:"" }}');
+      $('#id_component').val('{{ form.component.value|default_if_none:"" }}');
+      $('#id_query').val('{{ form.query.value|default_if_none:"" }}');
+    }
+
+    $(function(){
+      $("#page-zize").change(function(){
+          var pagezie = $( this ).val();
+          $("#id_page_size").val(pagezie);
+          $("#id_page").val(1);
+          reInitValue();
+          $('#query-from').submit();
+      });
+
+      $('#id_server_group').change(resetPage);
+      $('#id_biz_system').change(resetPage);
+      $('#id_component').change(resetPage);
+      $('#id_query').change(resetPage);
+      
+    });
+
+    function goto_page(page){
+      $("#id_page").val(page);
+      reInitValue();
+      $('#query-from').submit();
+    }
+  </script> 
+
+
+{% endblock %}
+
 {% block content %}
   <nav class="navbar navbar-light bg-light w-100">
     <a class="navbar-brand"></a>
-    <form class="form-inline" action="" method="post">
+    <form id="query-from" class="form-inline" method="post" action="{% url 'user-servers' %}">
       {% csrf_token %}
       {{ form }}
       <button class="btn btn-outline-success my-2 my-sm-0" type="submit">查询</button>
@@ -25,6 +67,8 @@
           <th scope="col">业务系统</th>
           <th scope="col">远程IP</th>
           <th scope="col">远程端口</th>
+          <th scope="col">对应端口</th>
+          <th scope="col" style="width: 200px;">备注</th>
         </tr>
       </thead>
       <tbody>
@@ -44,6 +88,12 @@
           <td>{{ server.biz_system_list|default:"-" }}</td>
           <td>{{ server.remote_connect_ip|default_if_none:"-" }}</td>
           <td>{{ server.remote_connect_port|default_if_none:"-" }}</td>
+          <td>{{ server.remote_connect_origin_port|default_if_none:"-" }}</td>
+          <td class="text-truncate">
+            <span class="d-inline-block text-truncate"  data-toggle="tooltip" data-html="true" style="width: 200px;" title="{{ server.summary|default_if_none:"-" }}">
+            {{ server.summary|default_if_none:"-" }}
+            </span>
+          </td>
         </tr>
       {% endfor %}
 

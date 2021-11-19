@@ -42,7 +42,7 @@ class Component(models.Model):
 
 class Port(models.Model):
     name = models.CharField('名称',blank=True, null=True, max_length=100)
-    port = models.IntegerField("端口",unique=True)
+    port = models.IntegerField("端口")
     description = models.TextField('说明', max_length=512, blank=True, null=True )
 
     def __str__(self):
@@ -84,6 +84,7 @@ class UserAndPassword(models.Model):
     name = models.CharField('名称',max_length=128, null=True, blank=False )
     user_name = models.CharField('账号',max_length=24)
     password = models.CharField('密码',max_length=64)
+    description = models.TextField('备注', max_length=512, blank=True, null=True )
 
     def name_str(self):
         if self.name == None or self.name == '':
@@ -106,12 +107,15 @@ class UserAndPassword(models.Model):
 def _ip_to_int(ip):
     if ip == None:
         return 0
-    return socket.ntohl(struct.unpack("I",socket.inet_aton(str(ip)))[0]) 
+    try:
+        return socket.ntohl(struct.unpack("I",socket.inet_aton(str(ip)))[0]) 
+    except:
+        return 0
 
 class Server(models.Model):
     name = models.CharField('名称',max_length=200)
     ip_address = models.CharField("IP地址",max_length=200)
-    ip_address_int = models.IntegerField("IP地址整数", null=False, default=0)
+    ip_address_int = models.BigIntegerField("IP地址整数", null=False, default=0)
     cpu_cores = models.IntegerField("CPU核数")
     memory_size = models.IntegerField("内存大小(G)")
     disc_sys_size = models.IntegerField("系统磁盘大小(G)")
@@ -125,6 +129,7 @@ class Server(models.Model):
 
     remote_connect_ip = models.CharField("远程连接IP", blank=True, null=True, max_length=64)
     remote_connect_port = models.CharField("远程连接端口", blank=True, null=True, max_length=20)
+    remote_connect_origin_port = models.CharField("对应端口", blank=True, null=True, max_length=20)
     
     
     def save(self, *args, **kwargs):

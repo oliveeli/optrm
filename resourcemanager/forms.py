@@ -16,3 +16,7 @@ class SearchForm(forms.Form):
     component.widget.attrs = {'class':input_class,'placeholder':'组件'}
     query = forms.CharField(label='', required=False, max_length=100)
     query.widget.attrs = {'class':input_class, 'placeholder':'服务器名称或IP'}
+    page = forms.CharField(required=False)
+    page.widget = forms.HiddenInput()
+    page_size = forms.CharField(required=False)
+    page_size.widget = forms.HiddenInput()

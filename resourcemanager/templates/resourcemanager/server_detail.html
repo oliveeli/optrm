@@ -96,6 +96,7 @@
             <th scope="col" class="col-3" style="width:25%">名称</th>
             <th scope="col" class="col-3" style="width:25%">账号</th>
             <th scope="col">密码</th>
+            <th scope="col">备注</th>
             </tr>
         </thead>
         <tbody>
@@ -104,6 +105,7 @@
             <td>{{ up.user_and_password.name|default:"-" }}</td>
             <td>{{ up.user_and_password.user_name }}</td>
             <td>{{ up.user_and_password.password|default:"-"  }}</td>
+            <td>{{ up.user_and_password.description|default:"-"  }}</td>
             </tr>
     {% endfor %}
 

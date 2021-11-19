@@ -8,6 +8,11 @@
     background-color: black;
 }
 
+tr td, th{
+    padding: 3px !important;
+    margin: 3px !important;
+}
+
 .col-center-block {
     position: absolute;
     top: 40%;

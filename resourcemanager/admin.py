@@ -25,9 +25,9 @@ class PortAdmin(admin.ModelAdmin):
 
 @admin.register(UserAndPassword)
 class UserAndPasswordAdmin(admin.ModelAdmin):
-    list_display = ('name_str','user_name','password')
-    fields = ['name','user_name','password']
-    search_fields = ('name',)
+    list_display = ('name_str','user_name','password','description')
+    fields = ['name','user_name','password','description']
+    search_fields = ('name','description',)
 
 class ComponentInstanceInline(admin.StackedInline):
     model = ComponentInstance
@@ -63,8 +63,8 @@ class ServerAdminForm(forms.ModelForm):
 @admin.register(Server)
 class ServerAdmin(admin.ModelAdmin):
     form = ServerAdminForm
-    list_display = ('name','ip_address', 'cpu_cores_text','memory_size_text','disc_sys_size_text','disc_biz_size_text','operating_system','groups_list','biz_system_list','user_group_list','remote_connect_ip','remote_connect_port','summary') 
-    fields = [('name','ip_address','operating_system'), ('cpu_cores','memory_size','disc_sys_size','disc_biz_size'),('group','biz_system'),'user_group',('remote_connect_ip','remote_connect_port'),'summary']
+    list_display = ('name','ip_address', 'cpu_cores_text','memory_size_text','disc_sys_size_text','disc_biz_size_text','operating_system','groups_list','biz_system_list','user_group_list','remote_connect_ip','remote_connect_port','remote_connect_origin_port','summary') 
+    fields = [('name','ip_address','operating_system'), ('cpu_cores','memory_size','disc_sys_size','disc_biz_size'),('group','biz_system'),'user_group',('remote_connect_ip','remote_connect_port','remote_connect_origin_port'),'summary']
     list_filter = ('group', 'biz_system', 'user_group')
     search_fields = ('name','ip_address')
     list_per_page = 10
