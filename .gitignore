@@ -9,3 +9,5 @@ uploads/
 knowledge/__pycache__/
 knowledge/migrations/__pycache__/
 knowledge/migrations/
+common/__pycache__/
+common/templatetags/__pycache__/

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'resourcemanager.apps.ResourcemanagerConfig',
     'knowledge.apps.KnowledgeConfig',
+    'common',
     'mdeditor',
     'mptt',
 ]
