@@ -5,9 +5,6 @@ from .models import Component,Port,ComponentInstance,Server,BizSystem,OperatingS
 admin.site.register(ServerGroup)
 admin.site.register(OperatingSystem)
 admin.site.register(BizSystem)
-# admin.site.register(Component)
-# admin.site.register(UserAndPassword)
-# admin.site.register(Port)
 
 @admin.register(Component)
 class ComponentAdmin(admin.ModelAdmin):
