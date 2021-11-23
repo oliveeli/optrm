@@ -1,0 +1,45 @@
+  {% load generalfilters %}
+  {% block pagination %}
+    {% if is_paginated %}
+      <form class="form-inline">
+        
+        <label for="page-zize">每页显示:</label>
+        <select class="form-control" id="page-zize" name="page-zize">
+            <option value="5" {% if form.page_size.value == "5" %} selected {% endif %}  >5</option>
+            <option value="10" {% if form.page_size.value == "10" %} selected {% endif %}>10</option>
+            <option value="15" {% if form.page_size.value == "15" %} selected {% endif %}>15</option>
+            <option value="20" {% if form.page_size.value == "20" %} selected {% endif %}>20</option>
+            <option value="30" {% if form.page_size.value == "30" %} selected {% endif %}>30</option>
+            <option value="50" {% if form.page_size.value == "50" %} selected {% endif %}>50</option>
+            <option value="100" {% if form.page_size.value == "100" %} selected {% endif %}>100</option>
+        </select>
+        <span style="margin-right: 5px;">条</span>
+
+        <nav aria-label="Page navigation example">
+          <ul class="pagination justify-content-center" style="margin: 0px;">
+                {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="javascript:goto_page({{ page_obj.previous_page_number }})">上一页</a></li>
+                {% else %}
+                   <li class="page-item disabled"><a class="page-link" href="#">上一页</a></li>
+                {% endif %}
+                {% for  i in  page_obj.paginator.num_pages|get_range %}
+                  {% if i|add:1  == page_obj.number %}
+                    <li class="page-item active" aria-current="page"><span class="page-link">{{ i|add:1 }}</span></li>
+                  {% else %}
+                    <li class="page-item"><a class="page-link" href="javascript:goto_page({{ i|add:1 }})">{{ i|add:1 }}</a></li>
+                  {% endif %}
+                  
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link" href="javascript:goto_page({{ page_obj.next_page_number }})">下一页</a></li>
+                {% else %}
+                   <li class="page-item disabled"><a class="page-link" href="#">下一页</a></li>
+                {% endif %}
+          </ul>
+        </nav>
+      </from>
+
+            
+
+    {% endif %}
+  {% endblock %} 

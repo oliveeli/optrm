@@ -3,6 +3,8 @@ from uuid import uuid4
 from django.db import models
 from django.db.models import Field
 from django.db.models.query import QuerySet
+from django.urls import reverse 
+import markdown 
 
 import mptt
 from mptt.fields import TreeForeignKey, TreeManyToManyField, TreeOneToOneField
@@ -11,8 +13,6 @@ from mptt.models import MPTTModel
 from django.contrib.auth.models import User,Group
 from mdeditor.fields import MDTextField
 
-
-    
 
 class Category(MPTTModel):
     name = models.CharField(max_length=64)
@@ -31,7 +31,7 @@ class Category(MPTTModel):
 class Article(models.Model):
     title = models.CharField(max_length=128,default='')
     category = TreeForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=False, verbose_name="分类")
-    content = MDTextField(verbose_name='内容',max_length=50)
+    content = MDTextField(verbose_name='内容',max_length=20480)
     create_time = models.DateTimeField('创建时间',auto_now_add=True)
     create_user = models.ForeignKey(User, related_name="createUser", null=True, blank=False, verbose_name="创建人",on_delete=models.SET_NULL)
     update_time = models.DateTimeField('最后更新时间', null=True, blank=True)
@@ -40,6 +40,13 @@ class Article(models.Model):
 
     def user_group_list(self):
         return ', '.join([a.name for a in self.user_group.all()])
+    
+    def get_markdown_content(self):
+        return markdown.markdown(self.content, extensions=[
+            'markdown.extensions.extra',
+            'markdown.extensions.codehilite',
+            'markdown.extensions.toc',
+        ])
 
     class MPTTMeta:
         order_insertion_by = ("create_time",)
@@ -50,3 +57,6 @@ class Article(models.Model):
     class Meta:
         verbose_name = "文章"
         verbose_name_plural = "文章"
+        
+    def get_absolute_url(self):
+        return reverse('article-detail', args=[str(self.id)])

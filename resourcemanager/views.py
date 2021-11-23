@@ -104,7 +104,7 @@ class ServerListUserView(LoginRequiredMixin,generic.ListView):
         if page == None or page == "":
             page = 1
         if page_size == None or page_size == "":
-            page_size = 10
+            page_size = "10"
         context['form'] = SearchForm({'page':page,'page_size':page_size,'query':query,'server_group':server_group,'biz_system':biz_system,'component':component})
         return context
 

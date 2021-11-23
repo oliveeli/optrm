@@ -33,6 +33,10 @@ urlpatterns += [
 ]
 
 urlpatterns += [
+    path('knowledge/', include('knowledge.urls')),
+]
+
+urlpatterns += [
     path('', RedirectView.as_view(url='/resourcemanager/user-servers/')),
 ]
 

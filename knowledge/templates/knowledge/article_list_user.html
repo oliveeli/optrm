@@ -1,0 +1,93 @@
+{% extends "base_generic.html" %}
+{% load static %}
+
+{% block script %}
+  <script type="text/javascript" src="{% static 'js/jquery.treeview.js' %}"></script>
+  <script type="text/javascript">
+  
+    function resetPage(){
+          $("#id_page").val(1);
+    }
+
+    function reInitValue(){
+      $('#id_title').val('{{ form.title.value|default_if_none:"" }}');
+      $('#id_content').val('{{ form.content.value|default_if_none:"" }}');
+      $('#id_category').val('{{ form.category.value|default_if_none:"" }}');
+    }
+
+      $(function(){
+        $("#browser").treeview({
+        });
+
+        $("#tree_selected").addClass('selected');
+
+        $("#page-zize").change(function(){
+            var pagezie = $( this ).val();
+            $("#id_page_size").val(pagezie);
+            $("#id_page").val(1);
+            reInitValue();
+            $('#query-from').submit();
+        });
+
+        $('#id_title').change(resetPage);
+        $('#id_content').change(resetPage);
+        $('#id_category').change(resetPage);
+    });
+
+    function goto_page(page){
+      $("#id_page").val(page);
+      reInitValue();
+      $('#query-from').submit();
+    }
+
+    function goto_category(category_id){
+      $("#id_category").val(category_id);
+      $('#id_title').val('');
+      $('#id_content').val('');
+      $("#id_page").val(1);
+      $('#query-from').submit();
+    }
+  </script> 
+{% block stylesheet %}
+  <link href="{% static 'css/jquery.treeview.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% endblock %}
+
+{% block content %}
+  <div class="col-2" style="border:5px solid #f7f7f7;">
+    <ul id="browser" class="filetree">
+      {{ category_html|safe }}
+    </ul>
+  </div>
+  <div class="col-10">
+    <nav class="navbar navbar-light bg-light w-100">
+      <a class="navbar-brand"></a>
+      <form id="query-from" class="form-inline" method="post" action="{% url 'user-articles' %}">
+        {% csrf_token %}
+        {{ form }}
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">查询</button>
+      </form>
+    </nav>
+      {% if article_list %}
+      <table class="table mr-2" style="font-size: 14px;">
+        {% for article in article_list %}
+            {%if forloop.counter|divisibleby:"2" %}
+          <tr  style="background-color: #e0eaf6;">
+            {% else %}
+          <tr>
+            {% endif %}
+            <td><a href="{{ article.get_absolute_url }}"> {{ article.title }} </a>
+            </td>
+            <td>{{ article.category|default_if_none:"-" }}</td>
+            <td>{{ article.create_time|default_if_none:"-" }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+      {% include "page.html" %}
+
+      {% else %}
+        <p>没有找到文章.</p>
+      {% endif %} 
+    </div>
+{% endblock %}
